@@ -191,7 +191,7 @@ const generateSwrImplementation = ({
       : ''
   }`;
   const swrKeyImplementation = `const swrKey = swrOptions?.swrKey ?? (() => isEnabled ? ${swrKeyFnName}(${swrKeyProperties}) : null);`;
-  const swrKeyLoaderImplementation = `const swrKeyLoader = swrOptions?.swrKeyLoader ?? (() => isEnabled ? ${swrKeyLoaderFnName}(${swrKeyProperties}) : null);`;
+  const swrKeyLoaderImplementation = `const swrKeyLoader = swrOptions?.swrKeyLoader ?? ((pageIndex, previousPageData) => isEnabled ? ${swrKeyLoaderFnName}(${swrKeyProperties})(pageIndex, previousPageData) : null);`;
 
   const errorType = getSwrErrorType(response, httpClient, mutator);
   const swrRequestSecondArg = getSwrRequestSecondArg(httpClient, mutator);
@@ -222,7 +222,7 @@ ${doc}export const ${camel(
 
   ${enabledImplementation}
   ${swrKeyLoaderImplementation}
-  const swrFn = () => ${operationName}(${httpFunctionProps}${
+  const swrFn = ([_url, params]: [string, any | undefined]) => ${operationName}(${httpFunctionProps}${
     httpFunctionProps && httpRequestSecondArg ? ', ' : ''
   }${httpRequestSecondArg})
 
@@ -264,7 +264,7 @@ ${doc}export const ${camel(`use-${operationName}`)} = <TError = ${errorType}>(
 
   ${enabledImplementation}
   ${swrKeyImplementation}
-  const swrFn = () => ${operationName}(${httpFunctionProps}${
+  const swrFn = ([_url, params]: [string, any | undefined]) => ${operationName}(${httpFunctionProps}${
     httpFunctionProps && httpRequestSecondArg ? ', ' : ''
   }${httpRequestSecondArg})
 
